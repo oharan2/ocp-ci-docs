@@ -1,27 +1,27 @@
 # Worked Example: MPEXOperator (POC)
 
-Documentation-only proof of concept. The MPEXOperator CI Operator Job Conf. in `openshift/release` may be fictional; Sippy and `ci-test-mapping` PR content below is still structurally valid for onboarding.
+Documentation-only proof of concept. The MPEXOperator CI Operator Job Conf. in [`openshift/release`](https://github.com/openshift/release) may be fictional; [`openshift/sippy`](https://github.com/openshift/sippy) and [`openshift-eng/ci-test-mapping`](https://github.com/openshift-eng/ci-test-mapping) PR content below is still structurally valid for onboarding.
 
 ## Invocation
 
 ```text
-/lp-ocp-compat-cr-onboarding lp-name=MPEXOperator lp-slug=mpexoperator lp-repo=redhatqe/mpexoperator lp-branch=main lp-ver=lpGA ocp-release=4.22 release-config=ci-operator/config/redhatqe/mpexoperator/redhatqe-mpexoperator-main__ocp-4.22-lpGA-lp-ocp-compat.yaml test-variant=aws gh-user=oharan2 make-maintainer=requester
+/lp-ocp-compat-cr-onboarding lp-name=MPEXOperator lp-slug=mpexoperator lp-repo=redhatqe/mpexoperator lp-branch=main lp-ver=lpGA ocp-release=4.22 release-config=ci-operator/config/redhatqe/mpexoperator/redhatqe-mpexoperator-main__ocp-4.22-lpGA-lp-ocp-compat.yaml test-variant=aws cron="0 6,18 * * *" gh-user=GH_USERNAME make-maintainer=requester
 ```
 
 ## Identifier table
 
-| Identifier | Value |
-|------------|-------|
-| `DR__RP__CR_COMP_NAME` / TS prefix | `lp-ocp-compat--MPEXOperator` |
-| `.tests[].as` | `cr--mpexoperator--aws` |
-| Periodic CI Operator Job name | `periodic-ci-redhatqe-mpexoperator-main-ocp-4.22-lpGA-lp-ocp-compat-cr--mpexoperator--aws` |
-| Sippy `layeredProductPatterns` sub-string | `-lpga-lp-ocp-compat-cr--mpexoperator--` |
-| Sippy CR Variant `LayeredProduct` | `lp-ocp-compat--mpexoperator--lpGA` |
-| CR View (`view=`) | `4.22-LP-OCP-Compat--lpGA` |
-| ci-test-mapping Go package | `lpmpexoperator` |
-| Jira / CR Component | `LP--MPEXOperator` |
-| `SuiteRegEx` | ``^lp-ocp-compat--MPEXOperator--`` |
-| Registry symbol | `LPmpexoperatorComponent` |
+| Identifier                                   | Value                                                                                        |
+|----------------------------------------------|----------------------------------------------------------------------------------------------|
+| `DR__RP__CR_COMP_NAME` / TS prefix           | `lp-ocp-compat--MPEXOperator`                                                                |
+| `.tests[].as`                                | `cr--mpexoperator--aws`                                                                      |
+| Periodic CI Operator Job name                | `periodic-ci-redhatqe-mpexoperator-main-ocp-4.22-lpGA-lp-ocp-compat-cr--mpexoperator--aws`   |
+| Sippy `layeredProductPatterns` sub-string    | `-lpga-lp-ocp-compat-cr--mpexoperator--`                                                     |
+| Sippy CR Variant `LayeredProduct`            | `lp-ocp-compat--mpexoperator--lpGA`                                                          |
+| CR View (`view=`)                            | `4.22-LP-OCP-Compat--lpGA`                                                                   |
+| ci-test-mapping Go package                   | `lpmpexoperator`                                                                             |
+| Jira / CR Component                          | `LP--MPEXOperator`                                                                           |
+| `SuiteRegEx`                                 | `` `^lp-ocp-compat--MPEXOperator--` ``                                                       |
+| Registry symbol                              | `LPmpexoperatorComponent`                                                                    |
 
 ## PR 1: openshift/release (mock)
 
@@ -37,9 +37,9 @@ tests:
         DR__RP__CR_COMP_NAME: lp-ocp-compat--MPEXOperator
 ```
 
-**Maintainer hand-off:** `make jobs` (not run in this POC; `make-maintainer=requester`).
+**Maintainer hand-off:** `make update` (not run in this POC; `make-maintainer=requester`).
 
-**Verification:** After a CI Operator Job Run, JUnit XML under the Test Step artifacts must show `<testsuite name="lp-ocp-compat--MPEXOperator--...">`.
+**Verification:** After a CI Operator Job Run, JUnit XML under the CI Operator Test Step artifacts must show `<testsuite name="lp-ocp-compat--MPEXOperator--...">`.
 
 ## PR 2: openshift/sippy (mock)
 
@@ -56,7 +56,7 @@ tests:
       - lp-ocp-compat--mpexoperator--lpGA
 ```
 
-**Files skipped (standard LP OCP Compat):** Step 1 BigQuery pattern, Step 2 `setOwner`, Step 6 `testSuitePatterns`.
+**Files skipped (standard LP OCP Compat):** [Step 1 (`BigQuery pattern`)](../../../../docs/OCP_CI_Tutorials/Reporting/Reporting_Guide.md#step-1----confirm-bigquery-job-pattern-match), [Step 2 (`setOwner`)](../../../../docs/OCP_CI_Tutorials/Reporting/Reporting_Guide.md#step-2----map-ci-operator-job-name-to-a-cr-variant-owner), [Step 6 (`testSuitePatterns`)](../../../../docs/OCP_CI_Tutorials/Reporting/Reporting_Guide.md#step-6----confirm-ts-import-pattern-coverage).
 
 **Maintainer hand-off:** `make update-variants` then `./sippy variants snapshot --config ./config/openshift.yaml`; commit `pkg/variantregistry/snapshot.yaml`.
 
@@ -156,6 +156,3 @@ func identifyCapabilities(test *v1.TestInfo) []string {
 
 Each upstream PR body must include the identifier table above, cross-links to the other two PRs, maintainer `make` lines, and `[ocp-ci-docs] lp-ocp-compat-cr-onboarding`.
 
-## Post-merge verification
-
-Open [4.22-LP-OCP-Compat--lpGA](https://sippy.dptools.openshift.org/sippy-ng/component_readiness/main?view=4.22-LP-OCP-Compat--lpGA) and confirm `LP--MPEXOperator` appears after data ingestion.
